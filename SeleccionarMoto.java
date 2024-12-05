@@ -34,11 +34,11 @@ class MotoDeportiva extends Moto{
 
     @Override
     public void arrancar() {
-    System.out.println("la moto deportiva" + modelo + "esta arrancando");
+    System.out.println("la " + modelo + " " + cilindraje + " esta arrancando");
     }
     @Override
     public void detener(){
-        System.out.println("la moto" + modelo + "ha sido apagada con exito");
+        System.out.println("la " + modelo + " " + cilindraje +  " ha sido apagada con exito");
     }
     @Override
     public void mostrarDetalles() {
@@ -47,7 +47,7 @@ class MotoDeportiva extends Moto{
     }
 //enumeracion
 enum TipoMoto{
-    DEPORTIVA,TODOTERRENO, SCOOTER, SEMIAUTOMATICA
+    DEPORTIVA,TODOTERRENO, SCOOTER, SEMIAUTOMATICA, URBANA
 }
 //parte de interface
 public class SeleccionarMoto extends JFrame{
@@ -120,30 +120,47 @@ detenerBoton.addActionListener(new ActionListener() {
 });
 add(detenerBoton);
     } 
-private void agregarMoto() {
-    String marca = marcaField.getText();
-    String modelo = modeloField.getText();
-    String cilindrajeStr = cilindrajeField.getText();
-    String costoStr = costoField.getText();
-
-    if (marca.isEmpty() || modelo.isEmpty() || cilindrajeStr.isEmpty() || costoStr.isEmpty()) {
-        JOptionPane.showMessageDialog(this,"es obligatorio llenar todos los campos" );
-        return;
+    private void agregarMoto() {
+        String marca = marcaField.getText();
+        String modelo = modeloField.getText();
+        String cilindrajeStr = cilindrajeField.getText();
+        String costoStr = costoField.getText();
+    
+        if (marca.isEmpty() || modelo.isEmpty() || cilindrajeStr.isEmpty() || costoStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Es obligatorio llenar todos los campos");
+            return;
+        }
+        
+        int cilindraje;
+        int costo;
+        try {
+            cilindraje = Integer.parseInt(cilindrajeStr);
+            costo = Integer.parseInt(costoStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El cilindraje y el costo tienen que ser un número");
+            return;
+        }
+        
+        TipoMoto tipo = (TipoMoto) tipoCombo.getSelectedItem();
+        boolean tieneCarenaje = false;  
+    
+        // Si la moto es deportiva le damos un valor de true
+        if (tipo == TipoMoto.DEPORTIVA) {
+            tieneCarenaje = true; 
+        }
+    
+        
+        Moto nuevaMoto;
+        if (tipo == TipoMoto.DEPORTIVA) {
+            nuevaMoto = new MotoDeportiva(marca, modelo, cilindraje, costo, tieneCarenaje);
+        } else {
+            nuevaMoto = new MotoDeportiva(marca, modelo, cilindraje, costo, tieneCarenaje);
+        }
+    
+        nuevaMoto.mostrarDetalles();
+        motoActual = nuevaMoto; // Guardamos la moto actual
+        JOptionPane.showMessageDialog(this, "Moto agregada: " + marca + " " + modelo);
     }
-    int cilindraje;
-    int costo;
-    try{
-        cilindraje = Integer.parseInt(cilindrajeStr);
-        costo = Integer.parseInt(costoStr);
-    }catch (NumberFormatException e){
-        JOptionPane.showMessageDialog(this, "El cilindraje y el costo tiene que ser un numero");
-        return;
-    }
-    TipoMoto tipo = (TipoMoto) tipoCombo.getSelectedItem();
-    Moto nuevaMoto = new MotoDeportiva ( marca, modelo, cilindraje, costo, true);
-    nuevaMoto.mostrarDetalles();
-    JOptionPane.showMessageDialog(this, "moto agregada:  " + marca + "  " + "" + modelo);
-}
 public static void main(String[] args) {
     SwingUtilities.invokeLater(() -> {
         SeleccionarMoto app = new SeleccionarMoto();
